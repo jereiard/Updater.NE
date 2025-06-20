@@ -1,5 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+	<!-- 버전 관리 파일 import -->
+	<Import Project="Version.props" />
+
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -12,17 +15,8 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/jereiard/updater.ne</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<!-- GitVersion 이 계산한 순수 SemVer 값(메타데이터 제외)을 쓰도록 -->
-		<PackageVersion>$(GitVersion_NuGetVersion)</PackageVersion>
-		<Version>$(PackageVersion)</Version>
-		<!-- 어셈블리 스탬프용 -->
-		<AssemblyVersion>$(GitVersion_AssemblySemVer)</AssemblyVersion>
-		<FileVersion>$(GitVersion_AssemblyFileVer)</FileVersion>
-		<InformationalVersion>$(GitVersion_InformationalVersion)</InformationalVersion>
-		<!-- 빌드 시 바로 패키징하려면 -->
+		
+		<!-- 빌드 시 바로 패키징 -->
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
@@ -35,5 +29,13 @@
 	<ItemGroup>
 		<None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
+
+	<!-- 빌드 시 버전 정보 출력 -->
+	<Target Name="DisplayVersion" BeforeTargets="Build">
+		<Message Text="🔧 Building AutoUpdater.Core" Importance="high" />
+		<Message Text="📦 Package version: $(PackageVersion)" Importance="high" />
+		<Message Text="🏷️  Full version: $(Version)" Importance="high" />
+		<Message Text="⚙️  Configuration: $(Configuration)" Importance="high" />
+	</Target>
 
 </Project>

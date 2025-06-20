@@ -1,6 +1,0 @@
-{
-  "mode": "ContinuousDelivery",
-  "tag": "useBranchName",
-  "assembly-versioning-scheme": "MajorMinorPatch",
-  "nuget-versioning-scheme": "MajorMinorPatch"
-}

@@ -1,0 +1,28 @@
+<Project>
+  <PropertyGroup>
+    <!-- 메이저.마이너 버전 (수동 관리) -->
+    <MajorVersion>1</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    
+    <!-- 자동 생성되는 빌드 번호 -->
+    <!-- 빌드 번호: 2025년 1월 1일부터의 일수 -->
+    <BuildNumber>$([MSBuild]::Subtract($([System.DateTime]::Now.Subtract($([System.DateTime]::Parse("2025-01-01"))).Days), 0))</BuildNumber>
+    
+    <!-- 리비전 번호: 하루 중 분 단위 (0-1439) -->
+    <RevisionNumber>$([MSBuild]::Add($([MSBuild]::Multiply($([System.DateTime]::Now.Hour), 60)), $([System.DateTime]::Now.Minute)))</RevisionNumber>
+    
+    <!-- CI/CD 환경에서 빌드 번호 오버라이드 -->
+    <BuildNumber Condition="'$(BUILD_NUMBER)' != ''">$(BUILD_NUMBER)</BuildNumber>
+    <RevisionNumber Condition="'$(BUILD_REVISION)' != ''">$(BUILD_REVISION)</RevisionNumber>
+    
+    <!-- 버전 조합 -->
+    <Version>$(MajorVersion).$(MinorVersion).$(BuildNumber).$(RevisionNumber)</Version>
+    <PackageVersion>$(MajorVersion).$(MinorVersion).$(BuildNumber)</PackageVersion>
+    <AssemblyVersion>$(MajorVersion).$(MinorVersion).0.0</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
+    
+    <!-- 개발 빌드 표시 -->
+    <InformationalVersion Condition="'$(Configuration)' == 'Debug'">$(Version)-dev</InformationalVersion>
+  </PropertyGroup>
+</Project> 
