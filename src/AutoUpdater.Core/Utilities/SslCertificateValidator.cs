@@ -140,11 +140,11 @@ public static class SslCertificateValidator
 
         if (isValid)
         {
-            _logger?.LogInformation("SSL 인증서 검증 통과: {Subject}", certificate.Subject);
+            _logger?.LogInformation("SSL 인증서 검증 통과: {Subject}", certificate?.Subject);
         }
         else
         {
-            _logger?.LogError("SSL 인증서 검증 실패: {Subject}, Errors: {Errors}", certificate.Subject, sslPolicyErrors);
+            _logger?.LogError("SSL 인증서 검증 실패: {Subject}, Errors: {Errors}", certificate?.Subject, sslPolicyErrors);
         }
 
         return isValid;
