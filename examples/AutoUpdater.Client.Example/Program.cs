@@ -2,18 +2,32 @@ using AutoUpdater.Core.Configuration;
 using AutoUpdater.Core.Interfaces;
 using AutoUpdater.Core.Models;
 using AutoUpdater.Core.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 Console.WriteLine("=== 자동 업데이터 클라이언트 예제 ===");
 Console.WriteLine();
 
+// 설정 파일 로드
+var configurationBuilder = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production"}.json", optional: true)
+    .AddEnvironmentVariables();
+
+var config = configurationBuilder.Build();
+
 // 서비스 컨테이너 구성
 var services = new ServiceCollection();
+
+// Configuration 등록
+services.AddSingleton<IConfiguration>(config);
 
 // 로깅 설정
 services.AddLogging(builder =>
 {
+    builder.AddConfiguration(config.GetSection("Logging"));
     builder.AddConsole();
     builder.SetMinimumLevel(LogLevel.Information);
 });
@@ -21,20 +35,55 @@ services.AddLogging(builder =>
 // HTTP 클라이언트 등록
 services.AddHttpClient();
 
-// 업데이터 설정
-var configuration = new UpdaterConfiguration
-{
-    ServerUrl = "https://192.168.8.210:7001", // 업데이트 서버 URL
-    ApplicationId = "TestApp",
-    CurrentVersion = "1.0.0",
-    CheckIntervalMinutes = 0, // 수동 확인
-    AutoDownload = false,
-    AutoInstall = false,
-    EnableLogging = true,
-    DebugMode = true
-};
+// 업데이터 설정을 appsettings.json에서 로드
+var updaterConfig = new UpdaterConfiguration();
+config.GetSection("AutoUpdater").Bind(updaterConfig);
 
-services.AddSingleton(configuration);
+// 설정 검증 및 기본값 설정
+if (string.IsNullOrEmpty(updaterConfig.ServerUrl))
+{
+    Console.WriteLine("⚠️ appsettings.json에서 ServerUrl이 설정되지 않았습니다. 기본값을 사용합니다.");
+    updaterConfig.ServerUrl = "https://192.168.8.210:7001";
+}
+
+if (string.IsNullOrEmpty(updaterConfig.ApplicationId))
+{
+    Console.WriteLine("⚠️ appsettings.json에서 ApplicationId가 설정되지 않았습니다. 기본값을 사용합니다.");
+    updaterConfig.ApplicationId = "AutoUpdaterClientExample";
+}
+
+if (string.IsNullOrEmpty(updaterConfig.CurrentVersion))
+{
+    Console.WriteLine("⚠️ appsettings.json에서 CurrentVersion이 설정되지 않았습니다. 기본값을 사용합니다.");
+    updaterConfig.CurrentVersion = "1.0.0";
+}
+
+// 수동 확인을 위해 일부 설정 오버라이드
+updaterConfig.CheckIntervalMinutes = 0; // 수동 확인
+updaterConfig.AutoDownload = false;
+updaterConfig.AutoInstall = false;
+updaterConfig.EnableLogging = true;
+updaterConfig.DebugMode = true;
+
+Console.WriteLine("📋 로드된 설정:");
+Console.WriteLine($"  서버 URL: {updaterConfig.ServerUrl}");
+Console.WriteLine($"  애플리케이션 ID: {updaterConfig.ApplicationId}");
+Console.WriteLine($"  현재 버전: {updaterConfig.CurrentVersion}");
+Console.WriteLine($"  사설 인증서 허용: {updaterConfig.Ssl.AllowSelfSignedCertificates}");
+Console.WriteLine($"  인증서 체인 오류 무시: {updaterConfig.Ssl.IgnoreCertificateChainErrors}");
+Console.WriteLine($"  인증서 이름 불일치 무시: {updaterConfig.Ssl.IgnoreCertificateNameMismatch}");
+Console.WriteLine($"  모든 SSL 오류 무시: {updaterConfig.Ssl.IgnoreAllSslErrors}");
+if (updaterConfig.Ssl.TrustedCertificateThumbprints.Count > 0)
+{
+    Console.WriteLine($"  신뢰할 인증서 지문: {string.Join(", ", updaterConfig.Ssl.TrustedCertificateThumbprints)}");
+}
+if (!string.IsNullOrEmpty(updaterConfig.Ssl.ClientCertificatePath))
+{
+    Console.WriteLine($"  클라이언트 인증서: {updaterConfig.Ssl.ClientCertificatePath}");
+}
+Console.WriteLine();
+
+services.AddSingleton(updaterConfig);
 
 // AutoUpdater 서비스 등록
 services.AddTransient<IUpdateChecker, WebUpdateChecker>();
@@ -67,8 +116,8 @@ try
     // 업데이트 요청 생성
     var updateRequest = new UpdateRequest
     {
-        ApplicationId = configuration.ApplicationId,
-        CurrentVersion = configuration.CurrentVersion,
+        ApplicationId = updaterConfig.ApplicationId,
+        CurrentVersion = updaterConfig.CurrentVersion,
         Platform = Environment.OSVersion.Platform.ToString(),
         Architecture = Environment.Is64BitProcess ? "x64" : "x86",
         Language = System.Globalization.CultureInfo.CurrentCulture.Name,
@@ -77,7 +126,7 @@ try
 
     Console.WriteLine($"현재 버전: {updateRequest.CurrentVersion}");
     Console.WriteLine($"플랫폼: {updateRequest.Platform} ({updateRequest.Architecture})");
-    Console.WriteLine($"서버 URL: {configuration.ServerUrl}");
+    Console.WriteLine($"서버 URL: {updaterConfig.ServerUrl}");
     Console.WriteLine();
 
     // 메뉴 루프
@@ -116,7 +165,7 @@ try
                     break;
 
                 case "5":
-                    ChangeSettings(configuration, updateRequest);
+                    ChangeSettings(updaterConfig, updateRequest);
                     break;
 
                 case "0":
