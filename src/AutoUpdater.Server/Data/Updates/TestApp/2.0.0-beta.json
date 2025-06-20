@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0-beta",
+  "downloadUrl": "https://localhost:7001/api/updates/TestApp/2.0.0-beta/download/TestApp_v2.0.0-beta.zip",
+  "fileSize": 31457280,
+  "fileHash": "d4e5f6789012345678901234567890abcdef1234567890abcdef123456789012",
+  "releaseNotes": "\uBCA0\uD0C0 \uBC84\uC804 - \uD14C\uC2A4\uD2B8 \uBAA9\uC801\n- \uC0C8\uB85C\uC6B4 UI \uB514\uC790\uC778\n- \uD074\uB77C\uC6B0\uB4DC \uB3D9\uAE30\uD654 \uAE30\uB2A5\n- API 2.0 \uC9C0\uC6D0\n\n\u26A0\uFE0F \uBCA0\uD0C0 \uBC84\uC804\uC774\uBBC0\uB85C \uD504\uB85C\uB355\uC158 \uD658\uACBD\uC5D0\uC11C \uC0AC\uC6A9\uD558\uC9C0 \uB9C8\uC138\uC694.",
+  "mandatory": false,
+  "minimumVersion": "1.5.0",
+  "releaseDate": "2025-06-20T06:23:48.4694547Z",
+  "metadata": {
+    "platform": "Win32NT",
+    "architecture": "x64",
+    "language": "ko-KR",
+    "prerelease": true,
+    "channel": "beta"
+  }
+}

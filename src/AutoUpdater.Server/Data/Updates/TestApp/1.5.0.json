@@ -1,0 +1,16 @@
+{
+  "version": "1.5.0",
+  "downloadUrl": "https://localhost:7001/api/updates/TestApp/1.5.0/download/TestApp_v1.5.0.msi",
+  "fileSize": 26214400,
+  "fileHash": "c3d4e5f6789012345678901234567890abcdef1234567890abcdef12345678901",
+  "releaseNotes": "\uC548\uC815\uC131 \uAC1C\uC120 \uBC0F \uC0C8\uB85C\uC6B4 \uAE30\uB2A5\n- \uBA54\uBAA8\uB9AC \uC0AC\uC6A9\uB7C9 \uCD5C\uC801\uD654\n- \uC0C8\uB85C\uC6B4 \uD50C\uB7EC\uADF8\uC778 \uC2DC\uC2A4\uD15C\n- \uB2E4\uAD6D\uC5B4 \uC9C0\uC6D0 \uD655\uC7A5",
+  "mandatory": false,
+  "minimumVersion": "1.0.0",
+  "releaseDate": "2025-06-17T06:23:48.4694541Z",
+  "metadata": {
+    "platform": "Win32NT",
+    "architecture": "x64",
+    "language": "ko-KR",
+    "installer": "MSI"
+  }
+}

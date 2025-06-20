@@ -1,0 +1,16 @@
+{
+  "version": "1.1.0",
+  "downloadUrl": "https://localhost:7001/api/updates/AutoUpdaterClientExample/1.1.0/download/AutoUpdaterClientExample_v1.1.0.zip",
+  "fileSize": 5242880,
+  "fileHash": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+  "releaseNotes": "\uBC84\uADF8 \uC218\uC815 \uBC0F \uC131\uB2A5 \uAC1C\uC120\n- \uC5C5\uB370\uC774\uD2B8 \uD655\uC778 \uC18D\uB3C4 \uD5A5\uC0C1\n- UI \uAC1C\uC120\n- \uB85C\uADF8 \uCD9C\uB825 \uCD5C\uC801\uD654",
+  "mandatory": false,
+  "minimumVersion": "1.0.0",
+  "releaseDate": "2025-06-13T06:23:48.4693407Z",
+  "metadata": {
+    "platform": "Win32NT",
+    "architecture": "x64",
+    "language": "ko-KR",
+    "category": "Minor Update"
+  }
+}
