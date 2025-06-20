@@ -29,15 +29,25 @@ services.AddLogging(builder =>
 {
     builder.AddConfiguration(config.GetSection("Logging"));
     builder.AddConsole();
-    builder.SetMinimumLevel(LogLevel.Information);
+    builder.SetMinimumLevel(LogLevel.Debug); // SSL 디버깅을 위해 Debug 레벨로 변경
 });
-
-// HTTP 클라이언트 등록
-services.AddHttpClient();
 
 // 업데이터 설정을 appsettings.json에서 로드
 var updaterConfig = new UpdaterConfiguration();
 config.GetSection("AutoUpdater").Bind(updaterConfig);
+
+// SSL 설정이 제대로 바인딩되었는지 확인
+if (updaterConfig.Ssl == null)
+{
+    Console.WriteLine("⚠️ SSL 설정이 null입니다. 기본 SSL 설정을 생성합니다.");
+    updaterConfig.Ssl = new SslConfiguration
+    {
+        AllowSelfSignedCertificates = true,
+        IgnoreCertificateChainErrors = true,
+        IgnoreCertificateNameMismatch = true,
+        IgnoreAllSslErrors = true
+    };
+}
 
 // 설정 검증 및 기본값 설정
 if (string.IsNullOrEmpty(updaterConfig.ServerUrl))
@@ -85,9 +95,21 @@ Console.WriteLine();
 
 services.AddSingleton(updaterConfig);
 
-// AutoUpdater 서비스 등록
-services.AddTransient<IUpdateChecker, WebUpdateChecker>();
-services.AddTransient<IUpdateDownloader, HttpUpdateDownloader>();
+// AutoUpdater 서비스 등록 - 설정으로부터 HttpClient를 직접 생성하는 생성자 사용
+services.AddTransient<IUpdateChecker>(provider =>
+{
+    var config = provider.GetRequiredService<UpdaterConfiguration>();
+    var logger = provider.GetRequiredService<ILogger<WebUpdateChecker>>();
+    return new WebUpdateChecker(config, logger);
+});
+
+services.AddTransient<IUpdateDownloader>(provider =>
+{
+    var config = provider.GetRequiredService<UpdaterConfiguration>();
+    var logger = provider.GetRequiredService<ILogger<HttpUpdateDownloader>>();
+    return new HttpUpdateDownloader(config, logger);
+});
+
 services.AddTransient<IUpdateInstaller, DefaultUpdateInstaller>();
 services.AddTransient<IAutoUpdater, AutoUpdaterService>();
 

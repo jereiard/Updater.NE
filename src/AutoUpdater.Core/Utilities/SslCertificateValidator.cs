@@ -62,10 +62,14 @@ public static class SslCertificateValidator
         SslPolicyErrors sslPolicyErrors,
         SslConfiguration sslConfig)
     {
+        _logger?.LogDebug("SSL 인증서 검증 시작 - 오류: {SslPolicyErrors}", sslPolicyErrors);
+        _logger?.LogDebug("SSL 설정 - IgnoreAllSslErrors: {IgnoreAllSslErrors}, IgnoreCertificateNameMismatch: {IgnoreCertificateNameMismatch}, AllowSelfSignedCertificates: {AllowSelfSignedCertificates}, IgnoreCertificateChainErrors: {IgnoreCertificateChainErrors}", 
+            sslConfig.IgnoreAllSslErrors, sslConfig.IgnoreCertificateNameMismatch, sslConfig.AllowSelfSignedCertificates, sslConfig.IgnoreCertificateChainErrors);
+
         // 모든 SSL 오류를 무시하는 경우 (개발용)
         if (sslConfig.IgnoreAllSslErrors)
         {
-            _logger?.LogWarning("모든 SSL 오류를 무시합니다. 이는 개발 환경에서만 사용해야 합니다.");
+            _logger?.LogWarning("모든 SSL 오류를 무시합니다. 이는 개발 환경에서만 사용해야 합니다. 오류: {SslPolicyErrors}", sslPolicyErrors);
             return true;
         }
 
@@ -118,11 +122,11 @@ public static class SslCertificateValidator
         {
             if (sslConfig.IgnoreCertificateNameMismatch)
             {
-                _logger?.LogWarning("인증서 이름 불일치를 무시합니다.");
+                _logger?.LogWarning("인증서 이름 불일치를 무시합니다. Subject: {Subject}", certificate?.Subject);
             }
             else
             {
-                _logger?.LogError("인증서 이름이 호스트명과 일치하지 않습니다.");
+                _logger?.LogError("인증서 이름이 호스트명과 일치하지 않습니다. Subject: {Subject}", certificate?.Subject);
                 isValid = false;
             }
         }

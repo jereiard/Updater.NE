@@ -53,11 +53,13 @@ public static class HttpClientFactory
     {
         if (sslConfig == null)
         {
-            _logger?.LogDebug("SSL 설정이 null입니다. 기본 설정을 사용합니다.");
+            _logger?.LogWarning("SSL 설정이 null입니다. 기본 설정을 사용합니다.");
             return;
         }
 
-        _logger?.LogDebug("SSL 설정 적용 중...");
+        _logger?.LogInformation("SSL 설정 적용 중...");
+        _logger?.LogInformation("SSL 설정 - IgnoreAllSslErrors: {IgnoreAllSslErrors}, IgnoreCertificateNameMismatch: {IgnoreCertificateNameMismatch}, AllowSelfSignedCertificates: {AllowSelfSignedCertificates}, IgnoreCertificateChainErrors: {IgnoreCertificateChainErrors}", 
+            sslConfig.IgnoreAllSslErrors, sslConfig.IgnoreCertificateNameMismatch, sslConfig.AllowSelfSignedCertificates, sslConfig.IgnoreCertificateChainErrors);
 
         // 인증서 검증 콜백 설정
         handler.ServerCertificateCustomValidationCallback = SslCertificateValidator.CreateHttpClientValidationCallback(sslConfig);

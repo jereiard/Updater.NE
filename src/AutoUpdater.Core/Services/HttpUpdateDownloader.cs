@@ -45,11 +45,15 @@ public class HttpUpdateDownloader : IUpdateDownloader, IDisposable
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         
+        _logger.LogInformation("HttpUpdateDownloader 초기화 중...");
+        
         // SSL 설정이 적용된 HttpClient 생성
         HttpClientFactory.SetLogger(_logger);
         SslCertificateValidator.SetLogger(_logger);
         _httpClient = HttpClientFactory.CreateHttpClient(_configuration);
         _ownsHttpClient = true;
+        
+        _logger.LogInformation("HttpUpdateDownloader 초기화 완료");
     }
 
     /// <summary>
