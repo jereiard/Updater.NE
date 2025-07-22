@@ -174,7 +174,8 @@ public class DefaultUpdateInstaller : IUpdateInstaller
       var startInfo = new ProcessStartInfo
       {
         FileName = "msiexec.exe",
-        Arguments = $"/i \"{msiPath}\" /quiet /norestart /l*v \"{Path.Combine(Path.GetTempPath(), "msi_install.log")}\"",
+        //Arguments = $"/i \"{msiPath}\" /quiet /norestart /l*v \"{Path.Combine(Path.GetTempPath(), "msi_install.log")}\"",
+        Arguments = $"/i \"{msiPath}\" /norestart /l*v \"{Path.Combine(Path.GetTempPath(), "msi_install.log")}\"",
         UseShellExecute = false,
         RedirectStandardOutput = true,
         RedirectStandardError = true,
